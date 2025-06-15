@@ -19,7 +19,7 @@ test.describe('Rectangle Feature - Automated Scenarios', () => {
     await page.waitForTimeout(3000); // Wait to ensure plan loads
 
     // Clear any residual rectangles from previous test runs
-    await canvas.clearDefaultRectangle();
+    await canvas.clearDefaultRectangle()
   });
 
   // Cleanup after each test
