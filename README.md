@@ -70,13 +70,13 @@ Every test starts from a blank, predictable state; no flaky network or cached st
 This also speeds execution because there’s no real backend round-trip.
 6. Lightweight performance instrumentation
 We can expose counters (e.g., render passes or FPS drop) purely for test builds.
-Tests enforce “drawing one rectangle must not trigger more than N renders,” catching performance regressions early—important for a graphics-heavy product.
+Tests enforce “drawing one rectangle must not trigger more than N renders,” catching performance regressions early and important for a graphics-heavy product.
 7. Easier debugging & root-cause analysis
 When a test fails, we can log the canvas internals or even replay actions because we understand the implementation.
 This shortens the feedback loop for both QA and engineers.
 8. Single source of truth for business logic
 Any geometry helper (pixel-to-model conversion, snapping rules, min/max size constraints) can be invoked directly in the tests.
-That ensures the verification logic is identical to production code—no risk of the test re-implementing rules incorrectly.
+That ensures the verification logic is identical to production code and no risk of the test re-implementing rules incorrectly.
 9. Clean CI/CD integration
 Because the app and tests share hooks and types, every pull request can spin up the test runner, giving the team immediate signal on UI regressions.
 The faster, flake-free suite encourages developers to rely on it, not bypass it.
