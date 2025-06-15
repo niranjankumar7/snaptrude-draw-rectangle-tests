@@ -49,10 +49,37 @@ All verifications include strong assertion criteria based on canvas behavior.
 
 Having access to the Snaptrude frontend source code (JavaScript/TypeScript) can enhance automated tests in several ways:
 
-- **DOM Insight**: Access to internal component structure and canvas DOM IDs/classes allows more accurate and stable selectors.
-- **State Exposure**: Developers can expose internal state for verification (e.g., rectangle dimensions or coordinates via a test hook).
-- **Better Synchronization**: Events and UI states (like tool readiness) can be hooked directly rather than relying on timing or visual delays.
-- **Mocking & Isolation**: Ability to mock services or isolate canvas logic during tests ensures deterministic outcomes.
+1. Direct insight into the canvas model
+With the source, we can read the exact coordinates, width/height, and style flags the app stores for each rectangle.
+Instead of visually guessing “did a rectangle appear?”, we assert “the model now contains one rectangle at (x, y) with the expected dimensions.”
+This eliminates false positives/negatives and speeds tests because we no longer need screenshots or pixel-diffs.
+2. First-class, unbreakable selectors
+We can add data-test-id attributes (or similar hooks) to toolbar buttons, canvas layers, etc.
+Tests then locate elements by those IDs, not brittle CSS paths.
+Any future UI redesign won’t break the tests, which slashes long-term maintenance.
+3. Real application events instead of timeouts
+The drawing tool already fires internal events (e.g., “rectangleCreated”).
+Tests can subscribe to those events and know exactly when the operation is finished.
+This removes the need for arbitrary “wait 500 ms” delays, making the suite faster and deterministic—crucial when we scale to thousands of tests.
+4. Shared TypeScript types = compile-time safety
+By importing the same Rectangle interface the app uses, our assertions are type-checked.
+If the domain model changes (say width becomes w), the tests fail to compile rather than silently passing with a broken assertion.
+5. Controlled, repeatable test data
+With code access we can run the canvas against an in-memory store or stubbed backend in test mode.
+Every test starts from a blank, predictable state; no flaky network or cached state issues.
+This also speeds execution because there’s no real backend round-trip.
+6. Lightweight performance instrumentation
+We can expose counters (e.g., render passes or FPS drop) purely for test builds.
+Tests enforce “drawing one rectangle must not trigger more than N renders,” catching performance regressions early—important for a graphics-heavy product.
+7. Easier debugging & root-cause analysis
+When a test fails, we can log the canvas internals or even replay actions because we understand the implementation.
+This shortens the feedback loop for both QA and engineers.
+8. Single source of truth for business logic
+Any geometry helper (pixel-to-model conversion, snapping rules, min/max size constraints) can be invoked directly in the tests.
+That ensures the verification logic is identical to production code—no risk of the test re-implementing rules incorrectly.
+9. Clean CI/CD integration
+Because the app and tests share hooks and types, every pull request can spin up the test runner, giving the team immediate signal on UI regressions.
+The faster, flake-free suite encourages developers to rely on it, not bypass it.
 
 ---
 
